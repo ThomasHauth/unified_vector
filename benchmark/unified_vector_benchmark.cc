@@ -3,100 +3,56 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include <chrono>
+#include <random>
 
-class DataClassA {
-public:
-	void dumpContent() {
-		std::cout << "This is class A" << std::endl;
-	}
-};
+#include "benchmark_support.h"
 
-class DataClassB {
-public:
-	void dumpContent() {
-		std::cout << "This is class B" << std::endl;
-	}
-};
+#include <boost/range/irange.hpp>
 
-class DataClassC {
-public:
-	void dumpContent() {
-		std::cout << "This is class C" << std::endl;
-	}
-};
+int main(int argc, char* argv[]) {
 
-class Test {
-public:
+	unified_vector<unified::SiliconPixelHit, unified::SiliconStripHit,
+			unified::DriftChamberHit> uv;
 
-	void push_back(DataClassA) {
-	}
+	const std::size_t avgContainerEntrySize = float(
+			sizeof(unified::SiliconPixelHit) + sizeof(unified::SiliconStripHit)
+					+ sizeof(unified::DriftChamberHit)) / 3.0;
 
-	void push_back(DataClassB) {
-	}
+	benchmark_support bsupport(argc, argv, avgContainerEntrySize);
 
-};
+	bsupport.runBenchmark(
+			uv, //
+			[&bsupport]( auto & unifiedVector, std::size_t containerEntries ) {
+				for ( std::size_t i = 0; i < (containerEntries/3); i++) {
+					unifiedVector.push_back(unified::SiliconPixelHit(bsupport.getSiliconHitLocation(),
+									bsupport.getSiliconHitLocation(),
+									bsupport.getHitEnergy()));
+				}
+				for ( std::size_t i = 0; i < (containerEntries/3); i++) {
+					if (i % 2) {
+						unifiedVector.push_back(unified::SiliconStripHit::createUHit(bsupport.getSiliconHitLocation(),
+										bsupport.getHitEnergy()));
+					} else {
+						unifiedVector.push_back(unified::SiliconStripHit::createVHit(bsupport.getSiliconHitLocation(),
+										bsupport.getHitEnergy()));
 
-namespace {
-
-template<class TUsedInLambda>
-void genLambdaFunction(TUsedInLambda fn) {
-	fn(23, 34);
-}
-
-}
-
-int main() {
-
-	unified_vector<DataClassA, DataClassB, DataClassC> uv;
-
-	uv.push_back(DataClassA());
-	uv.push_back(DataClassB());
-	uv.push_back(DataClassB());
-	uv.push_back(DataClassC());
-
-	auto lmd = [](auto & obj ) -> void { obj.dumpContent();};
-	uv.visit( lmd );
+					}
+				}
+				for ( std::size_t i = 0; i < (containerEntries/3); i++) {
+					unifiedVector.push_back(unified::DriftChamberHit(bsupport.getWireHitDriftTime(),
+									bsupport.getHitEnergy(),
+									bsupport.getWireHitLocation(),
+									bsupport.getWireHitLocation()));
+				}
+			},
+			[]( auto & unifiedVector, std::vector<Measurement> & measurements ) {
+				// make sure this lambda actually gets compiled out
+				unifiedVector.visit(
+						[&measurements](auto & obj ) -> void {measurements.emplace_back(obj.createMeasurement());
+						});
+			}, "unified_vector_results.txt");
 
 	return 0;
 }
 
-/*
-
- #include <memory>
-
- #include <cxxabi.h>
-
- using namespace std;
-
- // GCC demangling -- not required for functionality
- string demangle(const char* mangled) {
- int status;
- unique_ptr<char[], void (*)(void*)> result(
- abi::__cxa_demangle(mangled, 0, 0, &status), free);
- return result.get() ? string(result.get()) : "ERROR";
- }
-
- template<typename Param>
- struct BaseSingle {
- virtual void BaseFoo(Param) {
- cout << "Hello from BaseSingle<"
- << demangle(typeid(Param).name())
- << ">::BaseFoo" << endl;
- };
- };
-
- template<typename... Params>
- struct Base : public BaseSingle<Params>... {
- template<typename T> void Foo(T&& x) {
- this->BaseSingle<T>::BaseFoo(forward<T>(x));
- }
- };
-
- int main() {
- Base<string, int, bool> b;
- b.Foo(1);
- b.Foo(true);
- b.Foo(string("ab"));
- }
-
- */
