@@ -18,3 +18,10 @@ add_executable (virtual_vector_benchmark
         ${unified_vector_SOURCE_DIR}/benchmark/unified_benchmark_classes.cc
         ${unified_vector_SOURCE_DIR}/benchmark/virtual_benchmark_classes.cc
         ${unified_vector_SOURCE_DIR}/benchmark/virtual_vector_benchmark.cc)
+
+add_executable (unified_vector_test
+        ${unified_vector_SOURCE_DIR}/tests/unified_vector_test.cpp)
+        
+enable_testing()
+
+add_test(unified_vector_test unified_vector_test)	
