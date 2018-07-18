@@ -117,8 +117,5 @@ public:
 		unified_vector_implement_for_type<T>::clear();
 		unified_vector<Ts...>::clear();
 	}
-	/*
-
-	 */
 };
 
