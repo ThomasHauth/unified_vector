@@ -5,14 +5,12 @@ namespace utf = boost::unit_test;
 
 #include <unified_vector.h>
 
-class TestClassA {
-public:
+struct TestClassA {
 	int value = 23;
 };
 
-class TestClassB {
-public:
-	float value = 5.5;
+struct TestClassB {
+	float value = 5.5f;
 };
 
 BOOST_AUTO_TEST_CASE( unified_vector_push_back, * utf::tolerance(0.0001) ) {
