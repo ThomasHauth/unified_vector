@@ -17,17 +17,17 @@ public:
 
 protected:
 	template<class TVisitor>
-	void _internal_visit(TVisitor visitor) {
-		for (auto item : m_items) {
+	inline void _internal_visit(TVisitor visitor) const {
+		for (auto & item : m_items) {
 			visitor(item);
 		}
 	}
 
 	template<class TTransformResult, class TVisitor>
-	TTransformResult _internal_transform(TVisitor visitor) {
+	TTransformResult _internal_transform(TVisitor visitor) const {
 		TTransformResult tr;
 
-		for (auto item : m_items) {
+		for (auto const& item : m_items) {
 			tr.push_back(visitor(item));
 		}
 
@@ -55,20 +55,17 @@ public:
 	using unified_vector_implement_for_type<T>::push_back;
 
 	template<class TVisitor>
-	inline void visit(TVisitor visitor) {
+	inline void visit(TVisitor visitor) const {
 		unified_vector_implement_for_type<T>::_internal_visit(visitor);
 
 		// not recursive call here, obviously
 	}
 
 	template<class TTransformResult, class TVisitor>
-	TTransformResult transform(TVisitor visitor) {
-		TTransformResult tr;
-		auto tr_thisclass =
+	TTransformResult transform(TVisitor visitor) const {
+		return
 				unified_vector_implement_for_type<T>::_internal_transform(
 						visitor);
-
-		return tr_thisclass;
 	}
 
 	size_t size() const {
@@ -92,7 +89,7 @@ public:
 	using unified_vector_implement_for_type<T>::push_back;
 
 	template<class TVisitor>
-	inline void visit(TVisitor visitor) {
+	inline void visit(TVisitor visitor) const {
 		unified_vector_implement_for_type<T>::_internal_visit(visitor);
 
 		// recurse the visitor for all other types in the unified vector
@@ -100,11 +97,8 @@ public:
 	}
 
 	template<class TTransformResult, class TVisitor>
-	TTransformResult transform(TVisitor /*visitor*/) {
-/*		auto tr_thisclass =
-				unified_vector_implement_for_type<T>::_internal_transform<
-				TTransformResult TTransformResult>(visitor);
-
+	TTransformResult transform(TVisitor visitor) const {
+		auto tr_thisclass = unified_vector_implement_for_type<T>::_internal_transform(visitor);
 		// recurse the visitor for all other types in the unified vector
 		auto tr_subclasses = unified_vector<Ts...>::transform(visitor);
 
@@ -112,8 +106,7 @@ public:
 		tr_thisclass.insert(tr_thisclass.end(), tr_subclasses.begin(),
 				tr_subclasses.end());
 
-		return tr_thisclass;*/
-		return TTransformResult();
+		return tr_thisclass;
 	}
 
 	size_t size() const {
