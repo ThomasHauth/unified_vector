@@ -15,14 +15,11 @@ include_directories ( ${unified_vector_SOURCE_DIR}/unified_vector/ )
 include_directories ( ${unified_vector_SOURCE_DIR}/benchmark/ )
 
 add_executable (unified_vector_benchmark
-		${unified_vector_SOURCE_DIR}/benchmark/unified_benchmark_classes.cc
-		${unified_vector_SOURCE_DIR}/benchmark/virtual_benchmark_classes.cc
-		${unified_vector_SOURCE_DIR}/benchmark/benchmark_support.cc
-                ${unified_vector_SOURCE_DIR}/benchmark/unified_vector_benchmark.cc)
+        ${unified_vector_SOURCE_DIR}/benchmark/unified_benchmark_classes.cc
+        ${unified_vector_SOURCE_DIR}/benchmark/virtual_benchmark_classes.cc
+        ${unified_vector_SOURCE_DIR}/benchmark/unified_vector_benchmark.cc)
 
 add_executable (virtual_vector_benchmark
-		${unified_vector_SOURCE_DIR}/benchmark/unified_benchmark_classes.cc
-		${unified_vector_SOURCE_DIR}/benchmark/virtual_benchmark_classes.cc
-		${unified_vector_SOURCE_DIR}/benchmark/benchmark_support.cc
-                ${unified_vector_SOURCE_DIR}/benchmark/virtual_vector_benchmark.cc)
-
+        ${unified_vector_SOURCE_DIR}/benchmark/unified_benchmark_classes.cc
+        ${unified_vector_SOURCE_DIR}/benchmark/virtual_benchmark_classes.cc
+        ${unified_vector_SOURCE_DIR}/benchmark/virtual_vector_benchmark.cc)
