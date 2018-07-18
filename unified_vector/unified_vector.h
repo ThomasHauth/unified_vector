@@ -55,7 +55,7 @@ public:
 	using unified_vector_implement_for_type<T>::push_back;
 
 	template<class TVisitor>
-	void visit(TVisitor visitor) {
+	inline void visit(TVisitor visitor) {
 		unified_vector_implement_for_type<T>::_internal_visit(visitor);
 
 		// not recursive call here, obviously
@@ -92,7 +92,7 @@ public:
 	using unified_vector_implement_for_type<T>::push_back;
 
 	template<class TVisitor>
-	void visit(TVisitor visitor) {
+	inline void visit(TVisitor visitor) {
 		unified_vector_implement_for_type<T>::_internal_visit(visitor);
 
 		// recurse the visitor for all other types in the unified vector
